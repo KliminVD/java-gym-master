@@ -149,7 +149,7 @@ public class TimetableTest {
     }
 
     @Test
-    void testGetTrainingSessionsForDayAndTime() {
+    void testGetTrainingSessionsForDayAndTime() { // Получить тренировки по определенному дню и времени
         Timetable timetable = new Timetable();
 
         Group group = new Group("Акробатика для детей", Age.CHILD, 60);
@@ -160,7 +160,12 @@ public class TimetableTest {
         timetable.addNewTrainingSession(singleTrainingSession);
 
         //Проверить, что за понедельник в 13:00 вернулось одно занятие
+        List<TrainingSession> sessions13 = timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(13, 0)); // В понедельник одно заниятие в 13
+        Assertions.assertEquals(1, sessions13.size());
+        Assertions.assertEquals(singleTrainingSession, sessions13.getFirst());
         //Проверить, что за понедельник в 14:00 не вернулось занятий
+        List<TrainingSession> sessions14 = timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(14, 0)); // А на 14 нет
+        Assertions.assertTrue(sessions14.isEmpty());
     }
 
 }

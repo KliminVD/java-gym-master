@@ -30,7 +30,13 @@ public class Timetable {
         return result;
     }
 
-    public /* непонятно, что возвращать */ getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
-        //как реализовать, тоже непонятно, но сложность должна быть О(1)
+    public List<TrainingSession> getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
+        TreeMap<TimeOfDay, List<TrainingSession>> daySchedule = timetable.get(dayOfWeek);
+        if (daySchedule == null || daySchedule.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<TrainingSession> sessions = daySchedule.get(timeOfDay);
+        return sessions != null && !sessions.isEmpty() ? new ArrayList<>(sessions) : Collections.emptyList();
     }
 }
