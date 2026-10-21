@@ -39,4 +39,23 @@ public class Timetable {
         List<TrainingSession> sessions = daySchedule.get(timeOfDay);
         return sessions != null && !sessions.isEmpty() ? new ArrayList<>(sessions) : Collections.emptyList();
     }
+
+    public List<CounterOfTrainings> getCountByCoaches() { // Метод для подсчета тренировок у каждого тренера
+        Map<Coach, Integer> counts = new HashMap<>();
+        for (TreeMap<TimeOfDay, List<TrainingSession>> daySchedule : timetable.values()) {
+            for (List<TrainingSession> sessions : daySchedule.values()) {
+                for (TrainingSession session : sessions) {
+                    Coach coach = session.getCoach();
+                    counts.put(coach, counts.getOrDefault(coach, 0) + 1); // Считается количество тренировок для каждого тренера
+                }
+            }
+        }
+        List<CounterOfTrainings> result = new ArrayList<>();
+        for (Map.Entry<Coach, Integer> entry : counts.entrySet()) {
+            result.add(new CounterOfTrainings(entry.getKey(), entry.getValue())); // Данные собираются в список из CounterOfTrainings
+        }
+        result.sort((c1, c2) -> Integer.compare(c2.getCount(), c1.getCount())); // Сортировка в обратном порядке (от большого к меньшему)
+
+        return result;
+    }
 }
