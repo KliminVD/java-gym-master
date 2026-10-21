@@ -4,10 +4,17 @@ import java.util.*;
 
 public class Timetable {
 
-    private /* как это хранить??? */ timetable;
+    private final Map<DayOfWeek, TreeMap<TimeOfDay, List<TrainingSession>>> timetable = new HashMap<>();
 
     public void addNewTrainingSession(TrainingSession trainingSession) {
-        //сохраняем занятие в расписании
+        DayOfWeek day = trainingSession.getDayOfWeek();
+        TimeOfDay time = trainingSession.getTimeOfDay();
+        TreeMap<TimeOfDay, List<TrainingSession>> daySchedule =
+                timetable.computeIfAbsent(day, k -> new TreeMap<>());
+        List<TrainingSession> sessionsAtTime =
+                daySchedule.computeIfAbsent(time, k -> new ArrayList<>());
+
+        sessionsAtTime.add(trainingSession);
     }
 
     public /* непонятно, что возвращать */ getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
