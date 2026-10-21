@@ -91,7 +91,7 @@ public class TimetableTest {
     }
 
     @Test
-    void testGetTrainingSessionsForDaySingleSession() {
+    void testGetTrainingSessionsForDaySingleSession() { // Получение данных о тренировке по дням
         Timetable timetable = new Timetable();
 
         Group group = new Group("Акробатика для детей", Age.CHILD, 60);
@@ -102,11 +102,16 @@ public class TimetableTest {
         timetable.addNewTrainingSession(singleTrainingSession);
 
         //Проверить, что за понедельник вернулось одно занятие
+        List<TrainingSession> mondaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY); // В понедельник одна тренировка
+        Assertions.assertEquals(1, mondaySessions.size());
+        Assertions.assertEquals(singleTrainingSession, mondaySessions.getFirst());
         //Проверить, что за вторник не вернулось занятий
+        List<TrainingSession> tuesdaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.TUESDAY); // В четверг ничего нет
+        Assertions.assertTrue(tuesdaySessions.isEmpty());
     }
 
     @Test
-    void testGetTrainingSessionsForDayMultipleSessions() {
+    void testGetTrainingSessionsForDayMultipleSessions() { // Получение данных о нескольких тренировках
         Timetable timetable = new Timetable();
 
         Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
@@ -130,8 +135,17 @@ public class TimetableTest {
         timetable.addNewTrainingSession(saturdayChildTrainingSession);
 
         // Проверить, что за понедельник вернулось одно занятие
+        List<TrainingSession> mondaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY); // В понедельник будет одно занятие
+        Assertions.assertEquals(1, mondaySessions.size());
+        Assertions.assertEquals(mondayChildTrainingSession, mondaySessions.getFirst());
         // Проверить, что за четверг вернулось два занятия в правильном порядке: сначала в 13:00, потом в 20:00
+        List<TrainingSession> thursdaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.THURSDAY); // В четверг два занятия в отсортированном по времени порядке
+        Assertions.assertEquals(2, thursdaySessions.size());
+        Assertions.assertEquals(thursdayChildTrainingSession, thursdaySessions.get(0));
+        Assertions.assertEquals(thursdayAdultTrainingSession, thursdaySessions.get(1));
         // Проверить, что за вторник не вернулось занятий
+        List<TrainingSession> tuesdaySessions = timetable.getTrainingSessionsForDay(DayOfWeek.TUESDAY); // Во вторник занятий нет
+        Assertions.assertTrue(tuesdaySessions.isEmpty());
     }
 
     @Test

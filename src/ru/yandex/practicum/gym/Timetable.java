@@ -17,8 +17,17 @@ public class Timetable {
         sessionsAtTime.add(trainingSession);
     }
 
-    public /* непонятно, что возвращать */ getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
-        //как реализовать, тоже непонятно, но сложность должна быть О(1)
+    public List<TrainingSession> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
+        TreeMap<TimeOfDay, List<TrainingSession>> daySchedule = timetable.get(dayOfWeek);
+        if (daySchedule == null || daySchedule.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<TrainingSession> result = new ArrayList<>();
+        for (List<TrainingSession> sessions : daySchedule.values()) {
+            result.addAll(sessions);
+        }
+        return result;
     }
 
     public /* непонятно, что возвращать */ getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
