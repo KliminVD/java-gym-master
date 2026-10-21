@@ -168,4 +168,65 @@ public class TimetableTest {
         Assertions.assertTrue(sessions14.isEmpty());
     }
 
+    @Test
+    void testEmptyTimetable() { // Получение тренировки из пустого расписания
+        Timetable timetable = new Timetable();
+
+        Assertions.assertTrue(timetable.getTrainingSessionsForDay(DayOfWeek.MONDAY).isEmpty()); // Поиск по дням и по времени должен вернуть пустые списки
+        Assertions.assertTrue(timetable.getTrainingSessionsForDayAndTime(
+                DayOfWeek.MONDAY, new TimeOfDay(10, 0)).isEmpty());
+    }
+
+    @Test
+    void testMultipleSessionsAtSameTime() { // Получение нескольких тренировок в один день и одно время
+        Timetable timetable = new Timetable();
+
+        Coach coach1 = new Coach("Измайлов", "Кирилл", "Викторович");
+        Coach coach2 = new Coach("Семёнов", "Владимир", "Константинович");
+
+        Group group1 = new Group("Акробатика для детей", Age.CHILD, 60);
+        Group group2 = new Group("Гимнастика для детей", Age.CHILD, 45);
+
+        TrainingSession session1 = new TrainingSession(group1, coach1,
+                DayOfWeek.WEDNESDAY, new TimeOfDay(18, 0));
+        TrainingSession session2 = new TrainingSession(group2, coach2,
+                DayOfWeek.WEDNESDAY, new TimeOfDay(18, 0));
+
+        timetable.addNewTrainingSession(session1);
+        timetable.addNewTrainingSession(session2);
+
+        List<TrainingSession> sessions = timetable.getTrainingSessionsForDayAndTime(
+                DayOfWeek.WEDNESDAY, new TimeOfDay(18, 0));
+
+        Assertions.assertEquals(2, sessions.size()); // В среду в 18 должно быть две тренировки
+        Assertions.assertTrue(sessions.contains(session1));
+        Assertions.assertTrue(sessions.contains(session2));
+    }
+
+    @Test
+    void testGetSessionsForTimeWhenDayHasOtherSessions() { // Получение тренировки в конкретное время, когда в расписании в этот день есть и другие
+        Timetable timetable = new Timetable();
+
+        Coach coach = new Coach("Васильев", "Николай", "Сергеевич");
+        Group group = new Group("Акробатика для детей", Age.CHILD, 60);
+        // В один день добавляются несколько тренировок
+        TrainingSession session13 = new TrainingSession(group, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(13, 0));
+        TrainingSession session15 = new TrainingSession(group, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(15, 0));
+        TrainingSession session18 = new TrainingSession(group, coach,
+                DayOfWeek.MONDAY, new TimeOfDay(18, 0));
+
+        timetable.addNewTrainingSession(session13);
+        timetable.addNewTrainingSession(session15);
+        timetable.addNewTrainingSession(session18);
+
+        List<TrainingSession> sessions15 = timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(15, 0));  // В 15 только одна тренировка
+
+        Assertions.assertEquals(1, sessions15.size());
+        Assertions.assertEquals(session15, sessions15.getFirst());
+
+        List<TrainingSession> sessions14 = timetable.getTrainingSessionsForDayAndTime(DayOfWeek.MONDAY, new TimeOfDay(14, 0));  // В 14 нет тренировок
+        Assertions.assertTrue(sessions14.isEmpty());
+    }
 }
