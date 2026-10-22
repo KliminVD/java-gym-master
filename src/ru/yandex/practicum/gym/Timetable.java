@@ -5,6 +5,7 @@ import java.util.*;
 public class Timetable {
 
     private final Map<DayOfWeek, TreeMap<TimeOfDay, List<TrainingSession>>> timetable = new HashMap<>();
+    private HashMap<Coach, Integer> coachesCounter = new HashMap<>();
 
     public void addNewTrainingSession(TrainingSession trainingSession) {
         DayOfWeek day = trainingSession.getDayOfWeek();
@@ -15,6 +16,9 @@ public class Timetable {
                 daySchedule.computeIfAbsent(time, k -> new ArrayList<>());
 
         sessionsAtTime.add(trainingSession);
+
+        Coach coach = trainingSession.getCoach();
+        coachesCounter.put(coach, coachesCounter.getOrDefault(coach, 0) + 1);
     }
 
     public Map<TimeOfDay, List<TrainingSession>> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
@@ -37,17 +41,8 @@ public class Timetable {
     }
 
     public List<CounterOfTrainings> getCountByCoaches() { // Метод для подсчета тренировок у каждого тренера
-        Map<Coach, Integer> counts = new HashMap<>();
-        for (TreeMap<TimeOfDay, List<TrainingSession>> daySchedule : timetable.values()) {
-            for (List<TrainingSession> sessions : daySchedule.values()) {
-                for (TrainingSession session : sessions) {
-                    Coach coach = session.getCoach();
-                    counts.put(coach, counts.getOrDefault(coach, 0) + 1); // Считается количество тренировок для каждого тренера
-                }
-            }
-        }
         List<CounterOfTrainings> result = new ArrayList<>();
-        for (Map.Entry<Coach, Integer> entry : counts.entrySet()) {
+        for (Map.Entry<Coach, Integer> entry : coachesCounter.entrySet()) {
             result.add(new CounterOfTrainings(entry.getKey(), entry.getValue())); // Данные собираются в список из CounterOfTrainings
         }
         result.sort((c1, c2) -> Integer.compare(c2.getCount(), c1.getCount())); // Сортировка в обратном порядке (от большого к меньшему)
