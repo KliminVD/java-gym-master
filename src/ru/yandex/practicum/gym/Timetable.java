@@ -17,17 +17,13 @@ public class Timetable {
         sessionsAtTime.add(trainingSession);
     }
 
-    public List<TrainingSession> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
+    public Map<TimeOfDay, List<TrainingSession>> getTrainingSessionsForDay(DayOfWeek dayOfWeek) {
         TreeMap<TimeOfDay, List<TrainingSession>> daySchedule = timetable.get(dayOfWeek);
-        if (daySchedule == null || daySchedule.isEmpty()) {
-            return Collections.emptyList();
+        if (daySchedule == null) {
+            return new TreeMap<>();
         }
 
-        List<TrainingSession> result = new ArrayList<>();
-        for (List<TrainingSession> sessions : daySchedule.values()) {
-            result.addAll(sessions);
-        }
-        return result;
+        return daySchedule;
     }
 
     public List<TrainingSession> getTrainingSessionsForDayAndTime(DayOfWeek dayOfWeek, TimeOfDay timeOfDay) {
